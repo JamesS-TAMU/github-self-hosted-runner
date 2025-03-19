@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Configure docker sock:
 echo "Adding \"runner\" user to \"/var/run/docker.sock\"\'s group : "
 echo
 echo 'Before changing:'
@@ -18,18 +19,18 @@ sudo getent group docker
 echo "Done adding \"runner\" to ${DOCKER_SOCK_GID} ."
 echo
 
-echo 'Adding "KubeConfig" from "actionrunner_sa" account : '
-echo
-
-mkdir -p $HOME/.kube
-echo "${KUBECONFIG_CONTENT}" > $HOME/.kube/config
-echo
-
-echo "Done adding \"KubeConfig\" to \"$HOME/.kube/config\" ."
-echo
-
-
+# Start the runner:
 newgrp docker << EOF
+
+echo "Adding folio related configs : "
+echo
+
+yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/
+yarn global add @folio/stripes-cli
+
+echo
+echo "Done configuring folio related configs."
+echo
 
 echo "Starting the runner via \"${ACTIONS_RUNNER_DIR}/run.sh &\" : "
 echo

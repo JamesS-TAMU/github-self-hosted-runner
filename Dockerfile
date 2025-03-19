@@ -20,21 +20,21 @@ ENV GITHUB_RUNNER_NAME=""
 ENV GITHUB_RUNNER_LABELS=""
 ENV GITHUB_RUNNER_WORK_FOLDER=""
 
-# Provide the content of the KubeConfig from your Kubernetes cluster :
-ENV KUBECONFIG_CONTENT=""
-
 # Intall basic packages :
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get install -y wget vim nano git curl zip unzip tzdata locales ca-certificates sudo tree && \
+    apt-get install -y  tzdata locales ca-certificates sudo && \
     apt-get upgrade ca-certificates -y && \
+    update-ca-certificates && \
     apt-get install -y iputils-ping iproute2 net-tools && \
     ln -fs /usr/share/zoneinfo/America/Chicago /etc/localtime && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8
 
 # Configure actions-runner :
-RUN apt-get install -y libicu-dev jq docker.io npm yarnpkg openjdk-21-jdk maven && \
+RUN apt-get install -y wget curl vim nano git zip unzip tree && \
+    apt-get install -y npm yarnpkg openjdk-21-jdk maven && \
+    apt-get install -y libicu-dev docker.io jq && \
     ln -s /usr/bin/yarnpkg /usr/bin/yarn && \
     mkdir ${ACTIONS_RUNNER_DIR} && \
     mkdir ${ACTIONS_RUNNER_SCRIPTS_DIR} && \
