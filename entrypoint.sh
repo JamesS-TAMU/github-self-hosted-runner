@@ -39,6 +39,12 @@ echo
 
 ${ACTIONS_RUNNER_DIR}/run.sh &
 
+echo
+echo
+echo "run.sh has started ... "
+echo
+echo
+
 EOF
 
 tail -f /dev/null
