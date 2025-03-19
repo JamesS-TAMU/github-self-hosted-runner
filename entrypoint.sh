@@ -22,14 +22,16 @@ echo
 # Start the runner:
 newgrp docker << EOF
 
-echo "Adding folio related configs : "
+echo "The following folio related configs are being applied in the background : "
 echo
+echo 'yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/ &'
+echo 'yarn global add @folio/stripes-cli &'
 
-yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/
-yarn global add @folio/stripes-cli
+yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/ &
+yarn global add @folio/stripes-cli &
 
 echo
-echo "Done configuring folio related configs."
+echo "......"
 echo
 
 echo "Starting the runner via \"${ACTIONS_RUNNER_DIR}/run.sh &\" : "
