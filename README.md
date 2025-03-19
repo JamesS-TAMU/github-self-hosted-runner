@@ -1,15 +1,15 @@
-## Containerized Self-hosted GitHub Actions Runner with kubectl
+## Containerized Self-hosted GitHub Actions Runner for TAMU Folio Scratch Environment
 
 ### Instructions
 
 #### Overview
 
-- My test environment is Rancher v2.8.5, but it should be able to run in any Docker/Kubernetes environment with minor configuration changes.
+- The Folio Scratch Environment runs on Rancher v2.9.3 .
 - The actions-runner is built on `ubuntu:24.04` .
-- The actions-runner needs to run in privileged mode.
+- The actions-runner needs to run in privileged mode to share the docker sock.
 - A `bind mount` of `/var/run/docker.sock` is needed for the container to utilize the host/node's docker socket.
-- Your cluster's KubeConfig file is required for the actions-runner to interact with the deployments via `kubectl` .
-- If you wish to persist your installation, a persistent volume can be mounted to the `ACTIONS_RUNNER_DIR="/opt/actions-runner"` path.
+- A ServiceAccount, ClusterRole, and a ClusterRoleBinding need to be configured in your cluster for `kubectl` .
+- A volume can be mounted to the `ACTIONS_RUNNER_DIR="/opt/actions-runner"` path for persistent configs.
 - The installation and entrypoint scripts are under the `ACTIONS_RUNNER_SCRIPTS_DIR="/opt/actions-runner-scripts"` directory.
 
 #### Build image
@@ -57,7 +57,39 @@ KUBECONFIG_CONTENT="<CONTENT_FROM_YOUR_KUBECONFIG_FILE>"
 
 #### Start and run the actions-runner
 
-Using Rancher/Kubernetes as an example:
-- upon first startup, run the container with `CMD ["tail", "-f", "/dev/null"]` and run the `${ACTIONS_RUNNER_SCRIPTS_DIR}/install-runner.sh` script manually to install and configure the actions-runner. Or run the container using `CMD ["sh", "-c", "/opt/actions-runner-scripts/install-runner.sh"]` .
-- after the runner has been configured, change the ENTRYPOINT/CMD to `CMD ["sh", "-c", "/opt/actions-runner-scripts/entrypoint.sh"]` to start the runner.
+- upon first startup, run the container with `sh -c /opt/actions-runner-scripts/install-runner.sh` script to install and configure the actions-runner.
+- after the runner is configured, change the startup command to `sh -c /opt/actions-runner-scripts/entrypoint.sh` and start the runner.
+
+#### ServiceAccount, ClusterRole, and ClusterRoleBinding
+
+```
+# 1. Create a ServiceAccount, e.g., kubectl-sa, in the namespace you intend to deploy the actions-runner.
+
+# 2. Create the ClusterRole:
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubectl-clusterrole
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+
+# 3. Create the ClusterRoleBinding:
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubectl-clusterrolebinding
+subjects:
+  - kind: ServiceAccount
+    name: kubectl-sa
+    namespace: <YOUR_NAMESPACE>
+roleRef:
+  kind: ClusterRole
+  name: kubectl-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+```
 
