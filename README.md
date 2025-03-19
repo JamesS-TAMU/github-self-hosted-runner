@@ -60,7 +60,7 @@ KUBECONFIG_CONTENT="<CONTENT_FROM_YOUR_KUBECONFIG_FILE>"
 - upon first startup, run the container with `sh -c /opt/actions-runner-scripts/install-runner.sh` script to install and configure the actions-runner.
 - after the runner is configured, change the startup command to `sh -c /opt/actions-runner-scripts/entrypoint.sh` and start the runner.
 
-#### ServiceAccount, ClusterRole, and ClusterRoleBinding
+#### Configure Rancher ServiceAccount, ClusterRole, and ClusterRoleBinding
 
 ```
 # 1. Create a ServiceAccount, e.g., kubectl-sa, in the namespace you intend to deploy the actions-runner.
