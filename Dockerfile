@@ -32,7 +32,7 @@ RUN apt-get update -y && \
     update-locale LANG=en_US.UTF-8
 
 # Configure actions-runner :
-RUN apt-get install -y wget curl vim nano git zip unzip tree && \
+RUN apt-get install -y wget curl vim nano git zip unzip tree psmisc && \
     apt-get install -y npm yarnpkg openjdk-21-jdk maven && \
     apt-get install -y libicu-dev docker.io jq && \
     ln -s /usr/bin/yarnpkg /usr/bin/yarn && \
