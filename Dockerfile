@@ -34,7 +34,7 @@ RUN apt-get update -y && \
 # Configure actions-runner :
 RUN apt-get install -y wget curl vim nano git zip unzip tree psmisc && \
     apt-get install -y npm yarnpkg openjdk-21-jdk maven && \
-    apt-get install -y libicu-dev docker.io jq && \
+    apt-get install -y libicu-dev docker.io jq yq && \
     ln -s /usr/bin/yarnpkg /usr/bin/yarn && \
     mkdir ${ACTIONS_RUNNER_DIR} && \
     mkdir ${ACTIONS_RUNNER_SCRIPTS_DIR} && \
