@@ -23,7 +23,7 @@ ENV GITHUB_RUNNER_WORK_FOLDER=""
 # Intall basic packages :
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get install -y  tzdata locales ca-certificates sudo && \
+    apt-get install -y tzdata locales ca-certificates sudo && \
     apt-get upgrade ca-certificates -y && \
     update-ca-certificates && \
     apt-get install -y iputils-ping iproute2 net-tools && \
@@ -33,9 +33,8 @@ RUN apt-get update -y && \
 
 # Configure actions-runner :
 RUN apt-get install -y wget curl vim nano git zip unzip tree psmisc && \
-    apt-get install -y npm yarnpkg openjdk-21-jdk maven && \
+    apt-get install -y openjdk-21-jdk maven && \
     apt-get install -y libicu-dev docker.io jq yq && \
-    ln -s /usr/bin/yarnpkg /usr/bin/yarn && \
     mkdir ${ACTIONS_RUNNER_DIR} && \
     mkdir ${ACTIONS_RUNNER_SCRIPTS_DIR} && \
     groupadd --non-unique -g ${RUNNER_USER_ID} ${RUNNER_USER_NAME} && \
@@ -44,6 +43,17 @@ RUN apt-get install -y wget curl vim nano git zip unzip tree psmisc && \
     chown -R ${RUNNER_USER_NAME}:${RUNNER_USER_NAME} ${ACTIONS_RUNNER_DIR} && \
     usermod -aG sudo runner && \
     echo 'runner  ALL=(ALL)    NOPASSWD: ALL' >> /etc/sudoers
+
+# Install nodejs 22.x LTS :
+WORKDIR /opt
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh && \
+    chmod +x nodesource_setup.sh && \
+    ./nodesource_setup.sh && \
+    apt-get install -y nodejs && \
+    npm install --global yarn
+
+WORKDIR /
 
 # Install kubectl :
 RUN apt-get update -y && \
